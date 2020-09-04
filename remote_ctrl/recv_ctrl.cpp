@@ -95,16 +95,6 @@ static int onData(IIOClient* client, const char *data, size_t length, void *extI
                     break;
                 }
                 inputs.push_back(in);
-#if 0
-                switch(msg->mouse_event) {
-                case WM_MOUSEWHEEL:
-                    PostMessage(fw, msg->mouse_event, msg->extData, msg->x & (msg->y << 16));
-                    break;
-                default:
-                    PostMessage(fw, msg->mouse_event, 0, msg->x & (msg->y << 16));
-                    break;
-                }
-#endif
             }
             break;
         case KEYBOARD_EVENT_TYPE: {
@@ -131,16 +121,6 @@ static int onData(IIOClient* client, const char *data, size_t length, void *extI
                     in.ki.wScan |= 0xE000;
                 }
                 inputs.push_back(in);
-#if 0
-                if (kbmsg->state & (1 << 31)) {
-                    log("[KEYBOARD] event: key_up, wParam %x, lParam %x\n", kbmsg->vkey, kbmsg->state);
-                    PostMessage(fw, WM_KEYUP, kbmsg->vkey, kbmsg->state);
-                }
-                else {
-                    log("[KEYBOARD] event: key_down, wParam %x, lParam %x\n", kbmsg->vkey, kbmsg->state);
-                    PostMessage(fw, WM_KEYDOWN, kbmsg->vkey, kbmsg->state);
-                }
-#endif
             }
             break;
         default:
@@ -162,36 +142,7 @@ static void onError(IIOClient* client, int err) {
     log("transfer error, %d\n", err);
 }
 
-int acceptCtrl(IO_CLIENT_TYPE ctrlChannelType, void *extInfo)
-{
-    g_log = fopen("ctrled.log", "w");
-    g_ctrlServer = createIOClient(ctrlChannelType, extInfo);
-    IOCallbacks cbs;
-    // cbs.on_connect = onConnect;
-    cbs.on_data = onData;
-    cbs.on_error = onError;
-    g_ctrlServer->setCallbacks(std::move(cbs));
-    int ret = g_ctrlServer->connect(extInfo);
-    if (ret < 0) {
-        log("Start server failed, error %d\n", ret);
-        return ret;
-    }
-    return 0;
-}
-
-int stopCtrled()
-{
-    g_ctrlServer->close();
-    delete g_ctrlServer;
-    g_ctrlServer = NULL;
-
-    fclose(g_log);
-    g_log = NULL;
-
-    return 0;
-}
-
-int acceptCtrl1(IIOClient *ioClient)
+int acceptCtrl(IIOClient *ioClient)
 {
     g_log = fopen("ctrled.log", "w");
     g_ctrlServer = ioClient;
@@ -203,7 +154,7 @@ int acceptCtrl1(IIOClient *ioClient)
     return 0;
 }
 
-int stopCtrled1()
+int stopCtrled()
 {
     fclose(g_log);
     g_log = NULL;

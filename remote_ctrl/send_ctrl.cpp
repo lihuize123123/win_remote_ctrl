@@ -41,60 +41,7 @@ void setCtrlPanelRect(RECT displayRect)
     g_displayRect = displayRect;
 }
 
-/*void setDesktopDemension(RECT desktopRect)
-{
-    std::unique_lock<std::mutex> lock(g_mutex);
-    g_desktopRect = desktopRect;
-}*/
-
-int startCtrl(HWND targetWinHwnd, IO_CLIENT_TYPE ctrlChannelType, void *extInfo)
-{
-    g_log = fopen("ctrl.log", "w");
-
-    g_ctrlClient = createIOClient(ctrlChannelType, extInfo);
-    int ret = g_ctrlClient->connect((void *)extInfo);
-    if (ret < 0) {
-        log("client connect failed, error %d\n", ret);
-        return ret;
-    }
-
-    g_targetWinHwnd = targetWinHwnd;
-    g_mouseProcHook = SetWindowsHookEx(WH_MOUSE,
-        mouseProc,
-        g_hModule,
-        0);
-    g_keyboardProcHook = SetWindowsHookEx(WH_KEYBOARD,
-        keyboardProc,
-        g_hModule,
-        0);
-    if (g_mouseProcHook == 0 || g_keyboardProcHook == 0) {
-        DWORD err = GetLastError();
-        log("GetLastError: %d, 0x%x\n", err, err);
-        return -10;
-    }
-
-    return 0;
-}
-
-int stopCtrl()
-{
-    if (g_mouseProcHook != 0) {
-        UnhookWindowsHookEx(g_mouseProcHook);
-        g_mouseProcHook = 0;
-    }
-    if (g_keyboardProcHook != 0) {
-        UnhookWindowsHookEx(g_keyboardProcHook);
-        g_keyboardProcHook = 0;
-    }
-    g_ctrlClient->close();
-    delete g_ctrlClient;
-    g_ctrlClient = NULL;
-    fclose(g_log);
-    g_log = NULL;
-    return 0;
-}
-
-int startCtrl1(HWND targetWinHwnd, IIOClient *ioClient)
+int startCtrl(HWND targetWinHwnd, IIOClient *ioClient)
 {
     g_log = fopen("ctrl.log", "w");
 
@@ -117,7 +64,7 @@ int startCtrl1(HWND targetWinHwnd, IIOClient *ioClient)
     return 0;
 }
 
-int stopCtrl1()
+int stopCtrl()
 {
     if (g_mouseProcHook != 0) {
         UnhookWindowsHookEx(g_mouseProcHook);

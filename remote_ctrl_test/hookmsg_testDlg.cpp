@@ -174,7 +174,7 @@ void ChookmsgtestDlg::OnBnClickedConnect()
 {
     // TODO: 在此添加控件通知处理程序代码
     if (m_connected) {
-        stopCtrl1();
+        stopCtrl();
         m_ioClient->close();
         delete m_ioClient;
         m_ioClient = NULL;
@@ -217,7 +217,7 @@ void ChookmsgtestDlg::OnBnClickedConnect()
             //TODO: pop up error
         }
         // startCtrl(m_ctrlPanel->GetSafeHwnd(), UDP_CLIENT, &info);
-        startCtrl1(m_ctrlPanel->GetSafeHwnd(), m_ioClient);
+        startCtrl(m_ctrlPanel->GetSafeHwnd(), m_ioClient);
         // update UI
         m_connected = true;
         GetDlgItem(IDC_CONNECT)->SetWindowTextW(_T("disconnect"));
@@ -233,7 +233,7 @@ void ChookmsgtestDlg::OnBnClickedStartService()
         m_ioClient->close();
         delete m_ioClient;
         m_ioClient = NULL;
-        stopCtrled1();
+        stopCtrled();
         // update UI
         m_startService = false;
         GetDlgItem(IDC_START_SERVICE)->SetWindowTextW(_T("start service"));
@@ -255,7 +255,7 @@ void ChookmsgtestDlg::OnBnClickedStartService()
         if (ret < 0) {
             //TODO: pop up error
         }
-        acceptCtrl1(m_ioClient);
+        acceptCtrl(m_ioClient);
         // update UI
         m_startService = true;
         GetDlgItem(IDC_START_SERVICE)->SetWindowTextW(_T("stop service"));
